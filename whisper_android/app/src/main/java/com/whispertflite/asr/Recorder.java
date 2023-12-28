@@ -42,15 +42,15 @@ public class Recorder {
         mWavFilePath = wavFile;
     }
 
-    public void start() {
+    public void start(int audioSource) {
         if (mInProgress.get()) {
             Log.d(TAG, "Recording is already in progress...");
             return;
         }
-
+        Log.d(TAG, String.valueOf(audioSource));
         mExecutorThread = new Thread(() -> {
             mInProgress.set(true);
-            threadFunction();
+            threadFunction(4);
             mInProgress.set(false);
         });
         mExecutorThread.start();
@@ -82,7 +82,7 @@ public class Recorder {
             mListener.onDataReceived(samples);
     }
 
-    private void threadFunction() {
+    private void threadFunction(int audioSource) {
         try {
             if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
                 Log.d(TAG, "AudioRecord permission is not granted");
@@ -96,10 +96,10 @@ public class Recorder {
             int sampleRateInHz = 16000;
             int channelConfig = AudioFormat.CHANNEL_IN_MONO; // as per channels
             int audioFormat = AudioFormat.ENCODING_PCM_16BIT; // as per bytesPerSample
-            int audioSource = MediaRecorder.AudioSource.MIC;
+//            int audioSource = MediaRecorder.AudioSource.MIC;
 
             int bufferSize = AudioRecord.getMinBufferSize(sampleRateInHz, channelConfig, audioFormat);
-            AudioRecord audioRecord = new AudioRecord(audioSource, sampleRateInHz, channelConfig, audioFormat, bufferSize);
+            AudioRecord audioRecord = new AudioRecord(MediaRecorder.AudioSource.VOICE_CALL, sampleRateInHz, channelConfig, audioFormat, bufferSize);
             audioRecord.startRecording();
 
             int bufferSize1Sec = sampleRateInHz * bytesPerSample * channels;

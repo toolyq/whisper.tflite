@@ -6,6 +6,8 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
+import android.media.AudioRecord;
+import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -189,7 +191,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onDataReceived(float[] samples) {
-                //mWhisper.writeBuffer(samples);
+                mWhisper.writeBuffer(samples);
             }
         });
 
@@ -225,7 +227,8 @@ public class MainActivity extends AppCompatActivity {
 
         String waveFilePath = getFilePath(WaveUtil.RECORDING_FILE);
         mRecorder.setFilePath(waveFilePath);
-        mRecorder.start();
+        mRecorder.start(MediaRecorder.AudioSource.VOICE_CALL);
+//        mRecorder.start(MediaRecorder.AudioSource.MIC);
     }
 
     private void stopRecording() {
